@@ -2,7 +2,7 @@
 # Skrip helper untuk mende-deploy backend SiFile ke Google Cloud Run
 
 PROJECT_ID="sifile-app" # Ganti jika nama project berbeda
-REGION="us-central1"
+REGION="asia-southeast2"
 SERVICE_NAME="sifile-backend"
 
 echo "Mendeploy SiFile Backend ke Google Cloud Run ($REGION)..."
