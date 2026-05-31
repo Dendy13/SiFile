@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getJobHistory, deleteJob, Job } from '@/lib/api';
+import { parseMarkdown } from '@/lib/markdown';
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export default function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -98,17 +100,43 @@ export default function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
                   <div className="text-sm text-[var(--color-text-muted)]">
                     Status: <span className={job.status === 'done' ? 'text-green-600 font-medium' : job.status === 'error' ? 'text-red-600 font-medium' : 'text-yellow-600 font-medium'}>{job.status}</span>
                   </div>
-                  {job.status === 'done' && job.resultUrl && (
-                    <a href={job.resultUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline flex items-center gap-1 font-medium">
-                      Unduh
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                      </svg>
-                    </a>
-                  )}
+                  
+                  <div className="flex items-center gap-3">
+                    {job.status === 'done' && job.resultText && (
+                      <button 
+                        onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)}
+                        className="text-sm text-[var(--color-primary)] hover:underline flex items-center gap-1 font-medium"
+                      >
+                        {expandedJobId === job.id ? 'Tutup' : 'Buka'}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${expandedJobId === job.id ? 'rotate-180' : ''}`}>
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </button>
+                    )}
+                    
+                    {job.status === 'done' && job.resultUrl && (
+                      <a href={job.resultUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline flex items-center gap-1 font-medium">
+                        Unduh
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                      </a>
+                    )}
+                  </div>
                 </div>
+
+                {expandedJobId === job.id && job.resultText && (
+                  <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+                    <div className="bg-[var(--color-bg-muted)] p-4 rounded-lg max-h-60 overflow-y-auto">
+                      <article 
+                        className="prose prose-sm prose-blue max-w-none text-[var(--color-text)]"
+                        dangerouslySetInnerHTML={{ __html: parseMarkdown(job.resultText) }} 
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             ))
           )}

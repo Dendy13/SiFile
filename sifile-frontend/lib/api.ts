@@ -98,6 +98,7 @@ export type Job = {
   inputSizeBytes?: number
   outputSizeBytes?: number
   errorMessage?: string
+  resultText?: string
 }
 
 export async function getJobStatus(jobId: string): Promise<Job> {
