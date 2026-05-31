@@ -10,7 +10,9 @@ export const corsMiddleware = cors({
     // Allow requests with no origin (mobile apps, curl, Postman in dev)
     if (!origin) return callback(null, true)
 
-    if (ALLOWED_ORIGINS.includes(origin)) {
+    const isAllowedRegex = /sifile-app\.(web\.app|firebaseapp\.com)$|\.hosted\.app$/;
+    
+    if (ALLOWED_ORIGINS.includes(origin) || isAllowedRegex.test(origin)) {
       callback(null, true)
     } else {
       callback(new Error(`CORS: Origin ${origin} not allowed`))
