@@ -260,7 +260,7 @@ export default function ToolPage({ params }: { params: Promise<{ slug: string }>
                 <DropZone 
                   multiple={isMultiFile}
                   onFileSelect={handleFileSelect} 
-                  accept={tool.category === 'pdf' ? '.pdf' : 'image/jpeg, image/png, image/webp, image/gif, image/avif'} 
+                  accept={tool.acceptedTypes ? tool.acceptedTypes.join(', ') : (tool.category === 'pdf' ? '.pdf' : 'image/jpeg, image/png, image/webp, image/gif, image/avif')} 
                 />
               )}
             </div>

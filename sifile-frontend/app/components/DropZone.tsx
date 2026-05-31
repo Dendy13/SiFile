@@ -44,7 +44,7 @@ export default function DropZone({ onFileSelect, accept, disabled, multiple = fa
 
   return (
     <div 
-      className={`drop-zone p-12 min-h-[320px] flex flex-col items-center justify-center text-center ${isDragOver ? 'drag-over' : ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+      className={`drop-zone p-6 sm:p-12 min-h-[320px] flex flex-col items-center justify-center text-center ${isDragOver ? 'drag-over' : ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}

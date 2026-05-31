@@ -57,7 +57,7 @@ export default function ParamPanel({ params, suggestedParams, rationale, onParam
         )}
 
         {operation === 'image-resize' && (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">Width (px)</label>
               <input 
@@ -206,6 +206,9 @@ export default function ParamPanel({ params, suggestedParams, rationale, onParam
               >
                 <option value="Indonesian">Bahasa Indonesia</option>
                 <option value="English">English</option>
+                <option value="Chinese">Mandarin (Chinese)</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Spanish">Spanish</option>
               </select>
             </div>
           </div>

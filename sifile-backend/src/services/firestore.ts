@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { adminFirestore } from './firebase-admin'
 import { FieldValue } from 'firebase-admin/firestore'
+import { deleteFile } from './storage'
 
 export type JobStatus = 'pending' | 'processing' | 'done' | 'error'
 
@@ -122,4 +123,53 @@ export async function trackUsageEvent(
     // Non-critical — don't fail the request if tracking fails
     console.error('Usage tracking failed:', err)
   }
+}
+
+/**
+ * Get recent jobs for a user (last 24 hours).
+ */
+export async function getRecentJobs(userId: string): Promise<Job[]> {
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+  
+  const snapshot = await adminFirestore
+    .collection('jobs')
+    .where('userId', '==', userId)
+    .where('createdAt', '>=', twentyFourHoursAgo)
+    .orderBy('createdAt', 'desc')
+    .get()
+    
+  return snapshot.docs.map(doc => doc.data() as Job)
+}
+
+/**
+ * Delete a job and its associated results.
+ */
+export async function deleteJob(jobId: string, userId: string): Promise<boolean> {
+  const jobDoc = await adminFirestore.collection('jobs').doc(jobId).get()
+  
+  if (!jobDoc.exists) return false
+  
+  const jobData = jobDoc.data() as Job
+  if (jobData.userId !== userId) return false
+  
+  // Delete files in storage
+  try {
+    if (jobData.storagePath) {
+      await deleteFile(jobData.storagePath)
+    }
+    if (jobData.files) {
+      for (const file of jobData.files) {
+         if (file.storagePath) await deleteFile(file.storagePath)
+      }
+    }
+    if (jobData.resultStoragePath) {
+      await deleteFile(jobData.resultStoragePath)
+    }
+  } catch (err) {
+    console.error(`Failed to delete storage files for job ${jobId}:`, err)
+    // Proceed to delete the document anyway
+  }
+  
+  await adminFirestore.collection('jobs').doc(jobId).delete()
+  return true
 }

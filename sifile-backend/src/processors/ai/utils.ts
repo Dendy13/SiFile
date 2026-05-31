@@ -19,6 +19,6 @@ export function detectMimeType(buffer: Buffer): string {
     return 'image/webp'
   }
   
-  // Default to application/pdf since it is the primary document type
-  return 'application/pdf'
+  // Throw an error to prevent passing unsupported files to the AI model
+  throw new Error('Format file tidak didukung. Harap unggah file PDF atau Gambar (JPEG, PNG, WebP).')
 }

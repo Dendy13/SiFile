@@ -1,12 +1,49 @@
 import { Router, Response } from 'express'
 import { AuthenticatedRequest, authMiddleware } from '../middleware/auth'
-import { getJob } from '../services/firestore'
+import { getJob, getRecentJobs, deleteJob } from '../services/firestore'
 import { adminFirestore } from '../services/firebase-admin'
 
 export const jobsRouter = Router()
 
 /**
+ * GET /api/jobs
+ * Get recent jobs for the authenticated user (last 24 hours).
+ */
+jobsRouter.get('/', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.uid
+    const jobs = await getRecentJobs(userId)
+    res.json(jobs)
+  } catch (error) {
+    console.error('Error fetching recent jobs:', error)
+    res.status(500).json({ error: 'Failed to fetch job history' })
+  }
+})
+
+/**
+ * DELETE /api/jobs/:id
+ * Delete a specific job from history.
+ */
+jobsRouter.delete('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params
+    const userId = req.user!.uid
+    
+    const success = await deleteJob(id, userId)
+    if (!success) {
+      return res.status(404).json({ error: 'Job not found or access denied' })
+    }
+    
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting job:', error)
+    res.status(500).json({ error: 'Failed to delete job' })
+  }
+})
+
+/**
  * GET /api/jobs/:id
+
  * Get current job status and result URL.
  */
 jobsRouter.get('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {

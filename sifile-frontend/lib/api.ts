@@ -91,6 +91,7 @@ export type JobStatus = 'pending' | 'processing' | 'done' | 'error'
 
 export type Job = {
   id: string
+  operation: string
   status: JobStatus
   progress: number
   resultUrl?: string
@@ -172,14 +173,13 @@ export async function getUserUsage() {
   return apiRequest('/api/user/usage', { requireAuth: true })
 }
 
-export async function getUserHistory() {
-  return apiRequest('/api/user/history', { requireAuth: true })
+export async function getJobHistory(): Promise<Job[]> {
+  return apiRequest<Job[]>('/api/jobs', { requireAuth: true })
 }
 
-export async function deleteFile(fileId: string, storagePath: string) {
-  return apiRequest(`/api/files/${fileId}`, {
+export async function deleteJob(jobId: string) {
+  return apiRequest(`/api/jobs/${jobId}`, {
     method: 'DELETE',
-    body: { storagePath },
     requireAuth: true,
   })
 }
