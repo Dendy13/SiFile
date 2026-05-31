@@ -10,8 +10,9 @@ echo "Mendeploy SiFile Backend ke Google Cloud Run ($REGION)..."
 gcloud run deploy $SERVICE_NAME --quiet \
   --source . \
   --project $PROJECT_ID \
-  --region $REGION \
+  --region=asia-southeast1 \
   --allow-unauthenticated \
+  --set-env-vars="FIREBASE_STORAGE_BUCKET=sifile-app.firebasestorage.app" \
   --set-env-vars NODE_ENV=production,MAX_FILE_SIZE_MB=200 \
   --min-instances=0 \
   --max-instances=5 \
