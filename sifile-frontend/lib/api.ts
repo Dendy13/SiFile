@@ -114,7 +114,7 @@ export function streamJobProgress(
   token: string | null,
   handlers: {
     onProgress: (pct: number, status: JobStatus) => void
-    onDone: (result: { resultUrl: string; inputSizeBytes: number; outputSizeBytes: number; reductionPct: number }) => void
+    onDone: (result: { resultUrl: string; inputSizeBytes: number; outputSizeBytes: number; reductionPct: number; resultText?: string }) => void
     onError: (message: string) => void
   }
 ): () => void {

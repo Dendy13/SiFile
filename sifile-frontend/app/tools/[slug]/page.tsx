@@ -8,6 +8,7 @@ import DropZone from '../../components/DropZone';
 import ParamPanel from '../../components/ParamPanel';
 import ProgressBar from '../../components/ProgressBar';
 import ResultCard from '../../components/ResultCard';
+import AIResultCard from '../../components/AIResultCard';
 import { uploadFile, startProcess, streamJobProgress } from '@/lib/api';
 import { getIdToken } from '@/lib/firebase';
 
@@ -42,6 +43,7 @@ export default function ToolPage({ params }: { params: Promise<{ slug: string }>
   
   const [resultSize, setResultSize] = useState(0);
   const [resultUrl, setResultUrl] = useState('');
+  const [resultText, setResultText] = useState('');
 
   // Redirect if tool not found
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function ToolPage({ params }: { params: Promise<{ slug: string }>
 
   if (!tool) return null;
 
-  const isMultiFile = tool.operation === 'pdf-merge' || tool.operation === 'image-to-pdf' || tool.operation === 'batch-compress';
+  const isMultiFile = tool.operation === 'pdf-merge' || tool.operation === 'image-to-pdf' || tool.operation === 'batch-compress' || tool.operation === 'doc-compare';
 
   const handleFileSelect = async (selectedFiles: File[]) => {
     if (selectedFiles.length === 0) return;
@@ -96,6 +98,11 @@ export default function ToolPage({ params }: { params: Promise<{ slug: string }>
   };
 
   const handleProcess = async () => {
+    if (tool.operation === 'doc-compare' && uploadedFiles.length < 2) {
+      setErrorMsg('Harap unggah minimal 2 file untuk dapat membandingkan dokumen.');
+      return;
+    }
+
     setState('processing');
     setProgress(0);
     setStatusText('Starting process...');
@@ -125,6 +132,9 @@ export default function ToolPage({ params }: { params: Promise<{ slug: string }>
         onDone: (result) => {
           setResultUrl(result.resultUrl);
           setResultSize(result.outputSizeBytes);
+          if (result.resultText) {
+            setResultText(result.resultText);
+          }
           setState('done');
         },
         onError: (msg) => {
@@ -154,6 +164,7 @@ export default function ToolPage({ params }: { params: Promise<{ slug: string }>
     setProgress(0);
     setResultUrl('');
     setResultSize(0);
+    setResultText('');
     setUserParams({});
     setErrorMsg('');
   };
@@ -286,12 +297,22 @@ export default function ToolPage({ params }: { params: Promise<{ slug: string }>
 
           {/* Step 4: Result */}
           {state === 'done' && (
-            <ResultCard 
-              originalSize={uploadedFiles.reduce((acc, f) => acc + f.inputSizeBytes, 0)}
-              newSize={resultSize}
-              downloadUrl={resultUrl}
-              onReset={handleReset}
-            />
+            ['doc-summarize', 'doc-compare'].includes(tool.operation) ? (
+              <AIResultCard 
+                originalSize={uploadedFiles.reduce((acc, f) => acc + f.inputSizeBytes, 0)}
+                downloadUrl={resultUrl}
+                resultText={resultText}
+                onReset={handleReset}
+                operation={tool.operation}
+              />
+            ) : (
+              <ResultCard 
+                originalSize={uploadedFiles.reduce((acc, f) => acc + f.inputSizeBytes, 0)}
+                newSize={resultSize}
+                downloadUrl={resultUrl}
+                onReset={handleReset}
+              />
+            )
           )}
 
         </div>

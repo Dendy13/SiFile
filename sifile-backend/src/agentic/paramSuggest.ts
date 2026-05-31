@@ -56,11 +56,35 @@ function ruleBasedSuggestImageCompress(analysis: FileAnalysis): SuggestionResult
   }
 }
 
+function ruleBasedSuggestDocSummarize(analysis: FileAnalysis): SuggestionResult {
+  return {
+    params: {
+      summaryLength: 'medium',
+      format: 'key-takeaways',
+      language: 'Indonesian',
+    },
+    rationale: 'Rekomendasi ringkasan dengan panjang medium berformat poin penting dalam Bahasa Indonesia.',
+  }
+}
+
+function ruleBasedSuggestDocCompare(analysis: FileAnalysis): SuggestionResult {
+  return {
+    params: {
+      compareMode: 'text',
+      detailLevel: 'medium',
+      language: 'Indonesian',
+    },
+    rationale: 'Rekomendasi perbandingan teks dengan detail sedang dalam Bahasa Indonesia.',
+  }
+}
+
 // Add other rule-based fallbacks as needed...
 function getFallbackSuggestion(operation: string, analysis: FileAnalysis): SuggestionResult {
   switch (operation) {
     case 'pdf-compress': return ruleBasedSuggestPdfCompress(analysis)
     case 'image-compress': return ruleBasedSuggestImageCompress(analysis)
+    case 'doc-summarize': return ruleBasedSuggestDocSummarize(analysis)
+    case 'doc-compare': return ruleBasedSuggestDocCompare(analysis)
     default: return { params: {}, rationale: 'Using optimal default parameters for this file.' }
   }
 }

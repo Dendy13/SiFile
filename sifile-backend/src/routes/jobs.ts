@@ -83,6 +83,7 @@ jobsRouter.get('/:id/stream', authMiddleware, async (req: AuthenticatedRequest, 
           reductionPct: data.inputSizeBytes && data.outputSizeBytes
             ? Math.round((1 - data.outputSizeBytes / data.inputSizeBytes) * 100)
             : 0,
+          resultText: data.resultText,
         })
         cleanup()
       } else if (data.status === 'error') {

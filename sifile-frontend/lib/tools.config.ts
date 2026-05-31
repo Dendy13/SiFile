@@ -105,6 +105,26 @@ export const TOOLS: Tool[] = [
     icon: '📋',
     comingSoon: true,
   },
+  {
+    slug: 'summarize-document',
+    name: 'Summarize Document',
+    description: 'Generate an intelligent summary of any PDF or image using AI.',
+    category: 'pdf',
+    operation: 'doc-summarize',
+    priority: 'P1',
+    acceptedTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
+    icon: '📝',
+  },
+  {
+    slug: 'compare-documents',
+    name: 'Compare Documents',
+    description: 'Compare two documents (PDFs or images) and generate a detailed AI difference report.',
+    category: 'pdf',
+    operation: 'doc-compare',
+    priority: 'P1',
+    acceptedTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
+    icon: '📊',
+  },
 
   // ─── Image P0 ─────────────────────────────────
   {

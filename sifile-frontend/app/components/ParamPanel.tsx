@@ -128,8 +128,91 @@ export default function ParamPanel({ params, suggestedParams, rationale, onParam
           </div>
         )}
 
+        {operation === 'doc-summarize' && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">Summary Length</label>
+              <select 
+                value={params.summaryLength || suggestedParams.summaryLength || 'medium'}
+                onChange={(e) => onParamChange('summaryLength', e.target.value)}
+                className="input-base"
+              >
+                <option value="short">Short (~1 paragraph)</option>
+                <option value="medium">Medium (~3 paragraphs/points)</option>
+                <option value="detailed">Detailed (Comprehensive)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">Output Format</label>
+              <select 
+                value={params.format || suggestedParams.format || 'key-takeaways'}
+                onChange={(e) => onParamChange('format', e.target.value)}
+                className="input-base"
+              >
+                <option value="key-takeaways">Key Takeaways (Numbered)</option>
+                <option value="bulletpoints">Bullet Points</option>
+                <option value="paragraph">Paragraphs (Prose)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">Language</label>
+              <select 
+                value={params.language || suggestedParams.language || 'Indonesian'}
+                onChange={(e) => onParamChange('language', e.target.value)}
+                className="input-base"
+              >
+                <option value="Indonesian">Bahasa Indonesia</option>
+                <option value="English">English</option>
+                <option value="Chinese">Mandarin (Chinese)</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Spanish">Spanish</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {operation === 'doc-compare' && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">Comparison Mode</label>
+              <select 
+                value={params.compareMode || suggestedParams.compareMode || 'text'}
+                onChange={(e) => onParamChange('compareMode', e.target.value)}
+                className="input-base"
+              >
+                <option value="text">Text & Content Differences</option>
+                <option value="visual">Layout & Visual formatting</option>
+                <option value="both">Both Text and Layout</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">Detail Level</label>
+              <select 
+                value={params.detailLevel || suggestedParams.detailLevel || 'medium'}
+                onChange={(e) => onParamChange('detailLevel', e.target.value)}
+                className="input-base"
+              >
+                <option value="low">Low (General Summary)</option>
+                <option value="medium">Medium (Section-by-section)</option>
+                <option value="high">High (Line-by-line details)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">Language</label>
+              <select 
+                value={params.language || suggestedParams.language || 'Indonesian'}
+                onChange={(e) => onParamChange('language', e.target.value)}
+                className="input-base"
+              >
+                <option value="Indonesian">Bahasa Indonesia</option>
+                <option value="English">English</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         {/* Fallback generic JSON editor for other operations */}
-        {!['image-compress', 'image-resize', 'image-convert', 'pdf-compress', 'pdf-split'].includes(operation) && (
+        {!['image-compress', 'image-resize', 'image-convert', 'pdf-compress', 'pdf-split', 'doc-summarize', 'doc-compare'].includes(operation) && (
           <div className="text-sm text-[var(--color-text-muted)] italic">
             Using automatic optimal settings for this file.
           </div>

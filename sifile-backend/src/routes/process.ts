@@ -13,6 +13,8 @@ import { compressPdf } from '../processors/pdf/compress'
 import { splitPdf } from '../processors/pdf/split'
 import { pdfToImage } from '../processors/pdf/toImage'
 import { mergePdf } from '../processors/pdf/merge'
+import { summarizeDocument } from '../processors/ai/summarize'
+import { compareDocuments } from '../processors/ai/compare'
 
 export const processRouter = Router()
 
@@ -20,7 +22,7 @@ type ProcessorFn = (
   input: Buffer | Buffer[],
   params: Record<string, unknown>,
   onProgress: (pct: number) => void
-) => Promise<{ buffer: Buffer; mimeType: string; filename: string }>
+) => Promise<{ buffer: Buffer; mimeType: string; filename: string; resultText?: string }>
 
 // Registry of available processors
 const PROCESSORS: Record<string, ProcessorFn> = {
@@ -32,6 +34,8 @@ const PROCESSORS: Record<string, ProcessorFn> = {
   'pdf-split': splitPdf,
   'pdf-to-image': pdfToImage,
   'pdf-merge': mergePdf,
+  'doc-summarize': summarizeDocument,
+  'doc-compare': compareDocuments,
 }
 
 /**
@@ -136,6 +140,7 @@ async function runProcessor(
       resultUrl: signedUrl,
       resultStoragePath: resultPath,
       outputSizeBytes: result.buffer.length,
+      resultText: result.resultText,
     })
 
     trackUsageEvent(userId, 'operation_complete', { operation, jobId }).catch(() => {})

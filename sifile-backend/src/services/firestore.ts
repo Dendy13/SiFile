@@ -19,6 +19,7 @@ export interface Job {
   resultStoragePath?: string
   inputSizeBytes?: number
   outputSizeBytes?: number
+  resultText?: string
   errorMessage?: string
   createdAt: FirebaseFirestore.Timestamp
   updatedAt: FirebaseFirestore.Timestamp
